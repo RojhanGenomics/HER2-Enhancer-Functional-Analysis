@@ -54,7 +54,7 @@ This study focuses on **Her2-Enhancer1 (GH17J039694)** , an expressed enhancer l
 
 *Protein expression changes in HER2, GRB7, and p-AKT following enhancer disruption in SKBR3 and MCF7 cell lines.*
 
----
+
 
 ## Research Objectives
 
