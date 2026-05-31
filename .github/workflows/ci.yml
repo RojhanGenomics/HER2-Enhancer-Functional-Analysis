@@ -1,0 +1,63 @@
+name: Cancer Genomics CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy
+
+      - name: Validate repository structure
+        run: |
+          echo "Checking repository structure..."
+          test -f README.md && echo "✓ README.md found" || exit 1
+          test -d figures && echo "✓ figures/ directory found" || exit 1
+          test -d publications && echo "✓ publications/ directory found" || exit 1
+          test -d data && echo "✓ data/ directory found" || exit 1
+
+      - name: Check figure files
+        run: |
+          echo "Checking figure files..."
+          for fig in Figure1_HER2_Enhancer_Locus.jpg Figure2_Roles_of_Her2-En1.jpg Figure3_Western_Blot.jpg; do
+            if [ -f "figures/$fig" ]; then
+              echo "✓ $fig found"
+            else
+              echo "⚠ Warning: $fig not found"
+            fi
+          done
+
+      - name: Validate CSV file
+        run: |
+          echo "Checking primers CSV..."
+          if [ -f data/primers_and_gRNAs.csv ]; then
+            head -n 1 data/primers_and_gRNAs.csv | grep -q "Type" && echo "✓ CSV format OK"
+          else
+            echo "⚠ No CSV file found"
+          fi
+
+      - name: Count files
+        run: |
+          echo "📁 Repository statistics:"
+          echo "  - Markdown files: $(find . -name '*.md' | wc -l)"
+          echo "  - Figure files: $(find figures -type f 2>/dev/null | wc -l)"
+          echo "  - Publication files: $(find publications -type f 2>/dev/null | wc -l)"
+
+      - name: Success message
+        run: echo "✅ HER2 Enhancer Functional Analysis repository validated successfully!"
